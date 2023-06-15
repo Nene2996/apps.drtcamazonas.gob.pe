@@ -1,0 +1,11 @@
+{
+	"folders": [
+		{
+			"path": "../../.."
+		},
+		{
+			"path": "../../../../http-01-starting-setup"
+		}
+	],
+	"settings": {}
+}

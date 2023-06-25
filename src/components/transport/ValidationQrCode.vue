@@ -1,6 +1,5 @@
 <template>
     <h1>Validación de Certificado de Habilitación Vehicular</h1>
-    <!--<h2>{{ this.$route.query }}</h2>-->
     <p v-if="isLoading">Realizando el proceso de validacion del Certificado...</p>
     <p v-else-if="!isLoading && error">
       {{ error }}
@@ -35,7 +34,8 @@ export default {
   created() {
     this.isLoading = true;
     this.error = null;
-    fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
+    //fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
+    fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
     then((response) => {
       if (response.ok) {
         return response.json();

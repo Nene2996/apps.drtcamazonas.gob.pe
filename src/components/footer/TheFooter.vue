@@ -1,9 +1,9 @@
 <template>
     <h3>Enlaces de interes</h3>
     <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">Portal Gob.Pe</a></li>
+      <li><a href="https://www.gob.pe/regionamazonas-drtc" target="_blank" rel="noopener">Portal Gob.Pe</a></li>
       <li><a href="https://recordconductor.mtc.gob.pe/" target="_blank" rel="noopener">Record de Conductor</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">Exoneración de Examen</a></li>
+      <li><a href="https://licencias-tramite.mtc.gob.pe/frmConsultaExoneracion.aspx" target="_blank" rel="noopener">Exoneración de Examen</a></li>
       <li><a href="https://licencias-tramite.mtc.gob.pe/#/index" target="_blank" rel="noopener">Licencia de Conducir Electrónica</a></li>
       <li><a href="https://licencias.mtc.gob.pe/#/index" target="_blank" rel="noopener">Portal de Conductor</a></li>
     </ul>

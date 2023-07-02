@@ -5,13 +5,13 @@
       {{ error }}
     </p>
     <p v-else-if="!isLoading && (!results || results.length === 0)" style="color: red">.:No es posible comprobar la autenticidad del certificado:.</p>
-    <ul v-else>
+    <ul v-else id="habilitation">
       <li v-for="item in results" :key="item.id">
-        <h2>{{ item.numero }}</h2>
-        <h4>Número de Ruc Transportista</h4><span>{{ item.num_ruc }}</span>
+        <h2>Nro: {{ item.numero }}</h2>
+        <h4>Número de Ruc Transportista</h4><p>{{ item.num_ruc }}</p>
         <h4>Razón Social Transportista</h4><span>{{ item.razon_social }}</span>
         <h4>Ruta Autorizada</h4><span>{{ item.ruta_autorizada }}</span>
-        <h4>Rango de Habilitación</h4><span>[{{ item.fecha_inicio_hab }}] [{{ item.fecha_fin_hab }}]</span>
+        <h4>Rango de Habilitación</h4><span>[{{ formatDate(item.fecha_inicio_hab) }}] [{{ formatDate(item.fecha_fin_hab) }}]</span>
         <h4>Nro de Placa Vehicular</h4><span>{{ item.numero_placa_vigente }}</span>
         <h4>Marca y Modelo</h4><span>[{{ item.marca_comercial }}] [{{ item.modelo }}]</span>
         <h4>Año Fabricación y Año Modelo</h4><span>[{{ item.anio_fabricacion }}] [{{ item.anio_modelo }}]</span>
@@ -28,14 +28,30 @@ export default {
     return {
       results: [],
       isLoading: false,
-      error: null
+      error: null,
+    }
+  },
+  methods: {
+    formatDate(dateString) {
+        const date = new Date(dateString);
+        return new Intl.DateTimeFormat(
+        "es-PE", 
+        {
+          calendar: "gregory",
+          numberingSystem: "latn",
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+          timeZone: "Atlantic/Canary",
+        }).format(date);
+        //({timeZone: "America/Lima"}, {dateStyle: 'long'}).format(date);
     }
   },
   created() {
     this.isLoading = true;
     this.error = null;
-    //fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
-    fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
+    fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
+    //fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
     then((response) => {
       if (response.ok) {
         return response.json();
@@ -55,11 +71,29 @@ export default {
 </script>
 
 <style scoped>
-li {
-  margin: 1rem 0;
-  border-radius: 1rem;
-  border: 2px solid #ccc;
+
+#habilitation {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  margin: 3rem auto;
+  border-radius: 10px;
   padding: 1rem;
+  text-align: center;
+  width: 90%;
+  max-width: 40rem;
+}
+
+#habilitation h2 {
+  font-size: 2rem;
+  border-bottom: 4px solid #ccc;
+  color: #2389ff;
+  margin: 0 0 1rem 0;
+}
+#habilitation h4 {
+  border: 1px solid #a19e9e;
+  background-color: #bcbcbc;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 25px;
 }
 
 </style>

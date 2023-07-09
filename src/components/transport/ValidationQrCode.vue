@@ -8,16 +8,28 @@
     <ul v-else id="habilitation">
       <li v-for="item in results" :key="item.id">
         <h2>Nro: {{ item.numero }}</h2>
-        <h4>Número de Ruc Transportista</h4><p>{{ item.num_ruc }}</p>
-        <h4>Razón Social Transportista</h4><span>{{ item.razon_social }}</span>
-        <h4>Ruta Autorizada</h4><span>{{ item.ruta_autorizada }}</span>
-        <h4>Rango de Habilitación</h4><span>[{{ formatDate(item.fecha_inicio_hab) }}] [{{ formatDate(item.fecha_fin_hab) }}]</span>
-        <h4>Nro de Placa Vehicular</h4><span>{{ item.numero_placa_vigente }}</span>
-        <h4>Marca y Modelo</h4><span>[{{ item.marca_comercial }}] [{{ item.modelo }}]</span>
-        <h4>Año Fabricación y Año Modelo</h4><span>[{{ item.anio_fabricacion }}] [{{ item.anio_modelo }}]</span>
-        <h4>Número de Chasis</h4><span>{{ item.numero_chasis }}</span>
-        <h4>Número de Vin</h4><span>{{ item.vin }}</span>
-        <h4>Nro de asientos - Nro pasajeros</h4><span>[{{ item.numero_asientos }}] [{{ item.numero_pasajeros }}]</span>
+        <h4>Número de Ruc Transportista</h4>
+          <p>{{ item.num_ruc }}</p>
+        <h4>Razón Social Transportista</h4>
+          <span>{{ item.razon_social }}</span>
+        <h4>Ruta Autorizada</h4>
+          <span>{{ item.ruta_autorizada }}</span>
+        <h4>Rango de Habilitación</h4>
+          <span>{{ formatDate(item.fecha_inicio_hab) }} - {{ formatDate(item.fecha_fin_hab) }}</span>
+        <h4 v-if="status == 2">Estado Habilitación</h4>
+          <span id="status" v-if="status == 2">DADO DE BAJA</span>
+        <h4>Nro de Placa Vehicular</h4>
+          <span>{{ item.numero_placa_vigente }}</span>
+        <h4>Marca y Modelo</h4>
+          <span>[{{ item.marca_comercial }}] [{{ item.modelo }}]</span>
+        <h4>Año Fabricación y Año Modelo</h4>
+          <span>[{{ item.anio_fabricacion }}] [{{ item.anio_modelo }}]</span>
+        <h4>Número de Chasis</h4>
+          <span>{{ item.numero_chasis }}</span>
+        <h4>Número de Vin</h4>
+          <span>{{ item.vin }}</span>
+        <h4>Nro de asientos - Nro pasajeros</h4>
+          <span>[{{ item.numero_asientos }}] [{{ item.numero_pasajeros }}]</span>
       </li>
     </ul>
 </template>
@@ -29,6 +41,7 @@ export default {
       results: [],
       isLoading: false,
       error: null,
+      status: ''
     }
   },
   methods: {
@@ -50,8 +63,8 @@ export default {
   created() {
     this.isLoading = true;
     this.error = null;
-    fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
-    //fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
+    //fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
+    fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
     then((response) => {
       if (response.ok) {
         return response.json();
@@ -60,6 +73,8 @@ export default {
     .then(data => {
       this.isLoading = false;
       this.results = data;
+      this.status = data[0]['tipo_procedimiento_id'];
+      console.log(this.results);
     })
     .catch((error) => {
       console.log(error);
@@ -81,7 +96,6 @@ export default {
   width: 90%;
   max-width: 40rem;
 }
-
 #habilitation h2 {
   font-size: 2rem;
   border-bottom: 4px solid #ccc;
@@ -94,6 +108,13 @@ export default {
   color: white;
   padding: 0.5rem;
   border-radius: 25px;
+}
+#status {
+  border: 1px solid #f84747;
+  background-color: #f84747;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 25px
 }
 
 </style>

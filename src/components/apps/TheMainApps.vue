@@ -3,9 +3,6 @@
     <h2>{{ msg }}</h2>
     <section v-if="activeItems" id="controls">
       <router-link to="/transporte-terrestre-interprovincial">HABILITACIONES VEHICULARES</router-link>
-      <router-link to="/">MEDICIONES DE RADIACIONES</router-link>
-      <router-link to="/">MESA DE PARTES VIRTUAL</router-link>
-      <router-link to="/">SEGUIMIENTO DE TRAMITES - SISGEDO</router-link>
     </section>
     
       <main>

@@ -64,7 +64,7 @@ export default {
     this.isLoading = true;
     this.error = null;
     //fetch('http://127.0.0.1:8000/api/validar-codigo-qr/' + this.$route.query.code).
-    fetch('https://transporteterrestreinterprovincial.despliegueinformatica.com/api/validar-codigo-qr/' + this.$route.query.code).
+    fetch('https://transporteregionalyprovincial.appsdrtca.com/api/validar-codigo-qr/' + this.$route.query.code).
     then((response) => {
       if (response.ok) {
         return response.json();

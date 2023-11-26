@@ -1,5 +1,4 @@
 <template>
-<p>RESULTADOS DE LA BÚSQUEDA:</p>
   <li>
     <p>
       <span class="highlight">{{ name }}</span> Calificó la experiencia de aprendizaje
@@ -10,12 +9,7 @@
 
 <script>
 export default {
-  props: ['name', 'rating'],
-  computed: {
-    ratingClass() {
-      return 'highlight rating--' + this.rating;
-    },
-  },
+  props: ['name', 'rating']
 };
 </script>
 
@@ -34,10 +28,6 @@ p {
 
 .highlight {
   font-weight: bold;
-}
-
-.rating--poor {
-  color: #b80056;
 }
 
 .rating--average {

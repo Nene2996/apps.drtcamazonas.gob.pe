@@ -12,6 +12,7 @@ button {
   color: white;
   padding: 0.5rem 2rem;
   cursor: pointer;
+  margin: 0.5rem;
 }
 
 button:hover,

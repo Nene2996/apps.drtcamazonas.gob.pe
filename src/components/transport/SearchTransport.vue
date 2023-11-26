@@ -2,7 +2,7 @@
   <h1>Consulta de Habilitación Vehicular:</h1>
   <form @submit.prevent="searchHabilitation">
       <fieldset>
-        <legend>Tipo de Busqueda:</legend>
+        <legend>Tipo de Búsqueda:</legend>
         <div class="form-control">
           <label>
               <input 
@@ -11,22 +11,6 @@
               value="nroPlaca" 
               v-model="rbValue"> 
               Nro. de Placa Vehicular
-          </label>
-          <label>
-              <input 
-              type="radio" 
-              name="rbValue" 
-              value="nroRuc" 
-              v-model="rbValue"> 
-              Nro. de Ruc de Transportista
-          </label>
-          <label>
-              <input 
-              type="radio" 
-              name="rbValue" 
-              value="nroCert" 
-              v-model="rbValue"> 
-              Nro de Certificado
           </label>
         </div>
         <div class="form-control">
@@ -42,101 +26,135 @@
         <div>
           <base-button>BUSCAR</base-button>
         </div>
-        <div>
-          <query-result
-            v-for="result in results"
-            :key="result.id"
-            :name="result.numero"
-            :rating="result.fecha_expedicion">
-          </query-result>
+        <p v-if="isLoading">Realizando el proceso de validación de Placa...</p>
+        <p v-else-if="!isLoading && (!results || results.length === 0)" style="color: red">.:No existe habilitaciones asociadas:.</p>
+        <div v-else>
+          <table style="overflow-x:auto;">
+            <tr>
+              <th>Nro de Placa</th>
+              <th>Categ.</th>
+              <th>Marca</th>
+              <th>Año Fab.</th>
+              <th>Fecha inicio Hab.</th>
+              <th>Fecha fin Hab.</th>
+              <th>Resolución de Hab/Baja.</th>
+              <th>Fecha de Hab/Baja.</th>
+              <th>Nro de Cert/Tarj.</th>
+              <th>Procedimiento</th>
+              <th>Empresa Asociada.</th>
+              <th>Ruta.</th>
+              <th>Entidad de Autorización</th>
+            </tr>
+            <tr v-for="item in results" :key="item.id">
+              <td>{{ item.numero_placa_vigente }}</td>
+              <td>{{ item.categoria }}</td>
+              <td>{{ item.marca_comercial }}</td>
+              <td>{{ item.anio_fabricacion }}</td>
+              <td>{{ item.fecha_inicio_hab }}</td>
+              <td>{{ item.fecha_fin_hab }}</td>
+              <td>{{ item.tipo_res+' N° '+item.numero_res+'-'+item.anio }}</td>
+              <td>{{ item.fecha_emision }}</td>
+              <td>{{ item.numero }}</td>
+              <td>
+                <div v-if="item.tipo_procedimiento_id === 1">INCREMENTO</div>
+                <div v-if="item.tipo_procedimiento_id === 2"> BAJA VEHICULAR</div>
+              </td>
+              <td>{{ item.razon_social }}</td>
+              <td>{{ item.ruta_autorizada }}</td>
+              <td>{{ item.nombre_sede }}</td>
+            </tr>
+          </table>
         </div>
     </fieldset>
   </form>
 </template>
 
 <script>
-import QueryResult from './QueryResults.vue';
 export default ({
-  components: {
-    QueryResult,
-  },
   data() {
     return {
       rbValue: 'nroPlaca',
       valueSearch: null,
       errorsInput: [],
       results: [],
+      isLoading: false,
+      errorQuery: null
     }
   },
   methods: {
     searchHabilitation() {
-      this.errorsInput = [];
-
+      this.results = [];
       if (this.rbValue === 'nroPlaca') {
         if (!this.valueSearch) {
           this.errorsInput.push('Ingresa el número de Placa.');
         } else if (!this.validarNroPlaca(this.valueSearch)) {
           this.errorsInput.push('Ingrese un número de Placa válido => BAG-123.');
-        }
-      } else if (this.rbValue === 'nroRuc'){
-        if (!this.valueSearch) {
-          this.errorsInput.push('Ingresa el número de Ruc.');
-        } else if (!this.validarNroRuc(this.valueSearch)) {
-          this.errorsInput.push('Ingrese un número de Ruc válido (11 dígitos numéricos).');
-        }
-      } else {
-        if (!this.valueSearch) {
-          this.errorsInput.push('Ingresa el número de Certificado de Hab. Vehicular.');
-        } else if (!this.validarNroCertificado(this.valueSearch)) {
-          this.errorsInput.push('Ingrese un número de Certficado válido => 001449.');
-        }
-      }
-
-      fetch(' http://127.0.0.1:8000/api/validar-codigo-qr/727b8bcb8480fa51c3ed6fb1cbcebb')
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
+        } else {
+          this.errorsInput = [];
+          this.isLoading = true;
+          this.errorQuery = null;
+          fetch('https://transporteregionalyprovincial.appsdrtca.com/api/ConsultaPlacaVehiculo/'+ this.valueSearch)
+              .then((response) => {
+                if (response.ok) {
+                  return response.json();
+                }
+              })
+              .then(data => {
+                this.isLoading = false;
+                this.results = data;
+                console.log(this.results);
+              })
+                .catch((error) => {
+                console.log(error);
+                this.isLoading = false;
+                this.errorQuery = 'No se han podido obtener los datos, inténtalo de nuevo más tarde.';
+              });
+            }
           }
-        })
-        .then(data => {
-          this.results = data;
-        })
       },
 
     validarNroPlaca: function (nroPaca) {
       var re = /^\w{3}[-]\d{3}$/;
       return re.test(nroPaca);
     },
-    validarNroRuc: function (nroRuc) {
-      var re = /^\d{11}$/;
-      return re.test(nroRuc);
-    },
-    validarNroCertificado: function (nroCert) {
-      var re = /^\d{6}$/;
-      return re.test(nroCert);
-    },
   }
 })
 </script>
 
 <style scoped>
-.form-control {
-  margin: 0.5rem 0;
-}
+  .form-control {
+    margin: 0.5rem 0;
+  }
 
-fieldset {
-  border-radius: 8px;
-}
+  fieldset {
+    border-radius: 8px;
+  }
 
-.form-control.invalid input[type="radio"] {
-  border-color: red;
-}
+  .form-control.invalid input[type="radio"] {
+    border-color: red;
+  }
 
-li {
-  color: red;
-}
+  li {
+    color: red;
+  }
 
-.form-control.invalid p {
-  color: red;
-}
+  .form-control.invalid p {
+    color: red;
+  }
+
+  table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+
+  td, th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+  }
+
+  tr:nth-child(even) {
+    background-color: #dddddd;
+  }
 </style>
